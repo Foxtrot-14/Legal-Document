@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    command: sh -c "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 ridiv.wsgi:application"
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+  
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+  
+  # Uncomment if you need a database
+  # db:
+  #   image: postgres:13
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data/
+  #   environment:
+  #     POSTGRES_DB: yourdb
+  #     POSTGRES_USER: youruser
+  #     POSTGRES_PASSWORD: yourpassword
+
+# volumes:
+#   postgres_data:
