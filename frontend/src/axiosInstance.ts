@@ -1,7 +1,9 @@
 import axios, { AxiosInstance } from "axios";
 
+const host:string = ""
+
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL:'http://backend:8000',
+  baseURL:`http://${host}:8000`,
   timeout: 20000,
   headers: { "Content-Type": "application/json" },
 });

@@ -6,6 +6,8 @@ services:
     container_name: backend
     ports:
       - "8000:8000"
+    environment:
+      - VM_I=
     restart: unless-stopped
     networks:
       - app-network
@@ -19,6 +21,7 @@ services:
       - "80:80"
     environment:
       - BACKEND_ADDR=http://backend:8000
+      - VM_I=
     depends_on:
       - backend
     restart: unless-stopped
