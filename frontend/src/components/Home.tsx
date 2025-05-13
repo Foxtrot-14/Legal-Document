@@ -20,6 +20,7 @@ interface HistoryEntry {
 }
 const Home: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [id, setId] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -138,14 +139,16 @@ const Home: React.FC = () => {
     return history;
   };
   //use effect- everytime a message is added to the array if the type is text send the request, if the type  is response serve it
+  
   useEffect(() => {
     const handleMessage = async () => {
       if (messages.length > 0) {
         const lastMessage = messages[messages.length - 1];
         if (lastMessage.type === "text") {
-          // Prepare history
           const history: HistoryEntry[] = prephistory(messages);
-          history.pop(); // Remove the last message as it was just added
+          history.pop();
+
+          setLoading(true); // start spinner
           try {
             const res: MessageResponse = await sendMessage(
               lastMessage.content,
@@ -162,6 +165,8 @@ const Home: React.FC = () => {
               content: "Failed to send message",
             };
             setMessages((prevMessages) => [...prevMessages, msg]);
+          } finally {
+            setLoading(false); // stop spinner
           }
         }
       }
@@ -169,6 +174,7 @@ const Home: React.FC = () => {
 
     handleMessage();
   }, [messages]);
+
   useEffect(() => {
     const handleBeforeUnload = async () => {
       // Perform the request to your server
@@ -216,6 +222,11 @@ const Home: React.FC = () => {
             </div>
           ))}
         </section>
+        {loading && (
+          <div className="spinner-container">
+            <div className="spinner"></div>
+          </div>
+        )}
         <button className="but" onClick={handleUpload}>
           Upload PDF
         </button>

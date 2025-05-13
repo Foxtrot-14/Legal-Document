@@ -5,6 +5,18 @@ from .models import UploadedPDF
 from .serializers import UploadedPDFSerializer
 from .utils import prompt
 import json
+from rest_framework.decorators import api_view
+
+@api_view(['GET'])
+def test_connection(request):
+    if request.method == 'GET':
+        return JsonResponse(data={
+            "message":"Working",
+        }, status=200)
+    return JsonResponse(data={
+        "message":"Healty",
+    }, status=200)
+
 @csrf_exempt
 def upload_pdf(request):
     if request.method == 'POST':
