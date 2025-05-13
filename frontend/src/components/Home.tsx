@@ -3,21 +3,26 @@ import "./Home.css";
 import axiosInstance from "../axiosInstance";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+
 interface Message {
   type: "text" | "pdf" | "response";
   content: string;
 }
+
 interface UploadResponse {
   id: string;
   pdf_file: string;
 }
+
 interface MessageResponse {
   response: string;
 }
+
 interface HistoryEntry {
   role: string;
   parts: string[];
 }
+
 const Home: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -26,14 +31,17 @@ const Home: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const chatRef = useRef<HTMLDivElement>(null);
   const idRef = useRef<string>(id);
+
   useEffect(() => {
     idRef.current = id;
   }, [id]);
+
   const handleUpload = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
+
   const uploadPDF = async (file: File): Promise<UploadResponse> => {
     try {
       const formData = new FormData();
@@ -53,6 +61,7 @@ const Home: React.FC = () => {
       throw new Error(`Error uploading PDF: ${error}`);
     }
   };
+
   const sendMessage = async (
     msg: string,
     history: HistoryEntry[]
@@ -77,6 +86,7 @@ const Home: React.FC = () => {
       throw new Error(`Error uploading PDF: ${error}`);
     }
   };
+
   const handleFileSelect = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -91,6 +101,7 @@ const Home: React.FC = () => {
       processPDF(file);
     }
   };
+
   const processPDF = (file: File) => {
     const fileReader = new FileReader();
     fileReader.onload = (e) => {
@@ -127,6 +138,7 @@ const Home: React.FC = () => {
       }
     }
   };
+
   const prephistory = (msgs: Message[]): HistoryEntry[] => {
     const history: HistoryEntry[] = [];
     msgs.map((msg) => {
@@ -138,8 +150,7 @@ const Home: React.FC = () => {
     });
     return history;
   };
-  //use effect- everytime a message is added to the array if the type is text send the request, if the type  is response serve it
-  
+
   useEffect(() => {
     const handleMessage = async () => {
       if (messages.length > 0) {
@@ -148,7 +159,7 @@ const Home: React.FC = () => {
           const history: HistoryEntry[] = prephistory(messages);
           history.pop();
 
-          setLoading(true); // start spinner
+          setLoading(true);
           try {
             const res: MessageResponse = await sendMessage(
               lastMessage.content,
@@ -166,7 +177,7 @@ const Home: React.FC = () => {
             };
             setMessages((prevMessages) => [...prevMessages, msg]);
           } finally {
-            setLoading(false); // stop spinner
+            setLoading(false);
           }
         }
       }
@@ -177,7 +188,6 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const handleBeforeUnload = async () => {
-      // Perform the request to your server
       await axiosInstance.delete(`/pdf/${idRef.current}/delete/`);
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -185,6 +195,7 @@ const Home: React.FC = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
+
   return (
     <div className="container">
       <header>
@@ -221,24 +232,27 @@ const Home: React.FC = () => {
               )}
             </div>
           ))}
-        </section>
-        {loading && (
+          {loading && (
           <div className="spinner-container">
             <div className="spinner"></div>
           </div>
         )}
-        <button className="but" onClick={handleUpload}>
-          Upload PDF
-        </button>
-        <form onSubmit={handleMessageSubmit} className="inp">
-          <input type="text" ref={inputRef} placeholder="Enter Prompt" />
-          <button type="submit" className="send">
-            Send
-          </button>
-        </form>
+        </section>
       </main>
+        <div className="inp">
+          <form onSubmit={handleMessageSubmit}>
+            <input type="text" ref={inputRef} placeholder="Enter Prompt" />
+            <button type="submit" className="send">
+              Send
+            </button>
+            <button onClick={handleUpload} className="send">
+              Upload PDF
+            </button>
+          </form>
+        </div>
     </div>
   );
 };
 
 export default Home;
+
