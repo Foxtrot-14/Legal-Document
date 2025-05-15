@@ -26,12 +26,10 @@ SECRET_KEY = 'django-insecure-11#k)0oi=n)broh=)c$c8y5)js&x7yicz^57w1%_=0xt8o)7%v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-VM_IP = os.environ.get("VM_IP", "127.0.0.1")
-
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    VM_IP
+    "20.244.4.80"
 ]
 
 # Application definition
@@ -125,6 +123,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5173',
     'http://localhost:5173',
+    'http://20.244.4.80',
 ]
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/

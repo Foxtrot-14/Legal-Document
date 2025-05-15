@@ -5,9 +5,9 @@ services:
       dockerfile: Dockerfile
     container_name: backend
     ports:
-      - "8000:8000"
+      - "8000"
     environment:
-      - VM_I=localhost
+      - VM_I=20.244.4.80
     restart: unless-stopped
     networks:
       - app-network
@@ -20,8 +20,8 @@ services:
     ports:
       - "80:80"
     environment:
-      - BACKEND_ADDR=http://backend:8000
-      - VM_I=localhost
+      - BACKEND_ADDR=http://20.244.4.80:8000
+      - VM_I=20.244.4.80
     depends_on:
       - backend
     restart: unless-stopped
